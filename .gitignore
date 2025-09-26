@@ -1,0 +1,58 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.wheelhouse/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage*
+.cache/
+pytestdebug.log
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+.dmypy/
+
+# Environments
+.venv/
+.env
+.env.*
+
+# PyTorch artifacts
+*.pt
+*.bin
+artifacts/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# UV
+.uv/
+
+# Logs
+*.log
+
+# VSCode
+.vscode/
