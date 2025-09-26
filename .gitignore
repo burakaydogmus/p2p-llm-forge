@@ -56,3 +56,7 @@ Thumbs.db
 
 # VSCode
 .vscode/
+
+# build outputs
+artifacts/
+
