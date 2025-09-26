@@ -1,0 +1,24 @@
+[project]
+name = "p2p-llm-forge"
+version = "0.1.0"
+description = "Distributed training MVP built with PyTorch DDP."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "torch",
+  "transformers",
+  "tqdm"
+]
+
+[project.scripts]
+p2p-llm-forge = "p2p_llm_forge.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+index-url = "https://pypi.org/simple"
