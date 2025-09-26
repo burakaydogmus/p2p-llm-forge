@@ -4,63 +4,63 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.8+-red.svg)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-P2P-LLM-Forge, PyTorch DistributedDataParallel (DDP) kullanarak peer-to-peer küme ortamında nedensel dil modellerinin (causal language models) veri-paralel eğitimini gerçekleştiren bir MVP (Minimum Viable Product) projesidir.
+P2P-LLM-Forge is an MVP (Minimum Viable Product) that demonstrates data-parallel training of causal language models across peer-to-peer clusters using PyTorch DistributedDataParallel (DDP).
 
-Bu proje, modern dağıtılmış makine öğrenmesi uygulamalarında karşılaşılan zorlukları ele alır ve araştırmacılar ile geliştiricilerin çok düğümlü eğitim ortamlarını test etmelerine olanak sağlar.
+This project addresses the challenges faced in modern distributed machine learning applications and enables researchers and developers to test multi-node training environments.
 
-## ✨ Özellikler
+## ✨ Features
 
-- **Merkezi Konfigürasyon**: Hiperparametreler ve dağıtılmış çalışma zamanı ayarları için merkezi konfigürasyon sistemi
-- **Otomatik Süreç Grubu Yönetimi**: PyTorch DDP için otomatik süreç grubu kurulumu ve kapatılması
-- **Akıllı Veri İşleme**: Metin korpusları için tokenization ve paylaşılan depolama üzerinde shard edilmiş veri yükleme
-- **Gelişmiş Eğitim Döngüsü**: Gradyan senkronizasyonu, isteğe bağlı gradyan kırpma ve rank 0'dan checkpoint'leme
-- **Esnek Dağıtım**: Tek makine ve çok düğümlü dağıtılmış eğitim desteği
-- **CPU/GPU Uyumluluğu**: Hem CPU hem GPU ortamlarında çalışabilme
+- **Centralized Configuration**: Centralized configuration system for hyperparameters and distributed runtime settings
+- **Automatic Process Group Management**: Automatic process group setup and teardown for PyTorch DDP
+- **Intelligent Data Processing**: Tokenization and sharded data loading for text corpora on shared storage
+- **Advanced Training Loop**: Gradient synchronization, optional gradient clipping, and checkpointing from rank 0
+- **Flexible Distribution**: Support for both single-machine and multi-node distributed training
+- **CPU/GPU Compatibility**: Works in both CPU and GPU environments
 
-## 📋 Gereksinimler
+## 📋 Requirements
 
-- **Python**: 3.10 veya üzeri
+- **Python**: 3.10 or higher
 - **PyTorch**: 2.8+
-- **CUDA**: GPU eğitimi için (isteğe bağlı)
-- **uv**: Modern Python paket yöneticisi
+- **CUDA**: For GPU training (optional)
+- **uv**: Modern Python package manager
 
-## 🚀 Kurulum
+## 🚀 Installation
 
-### 1. Depoyu Klonlayın
+### 1. Clone the Repository
 ```bash
 git clone <repository-url>
 cd p2p-llm-forge
 ```
 
-### 2. Bağımlılıkları Yükleyin
+### 2. Install Dependencies
 ```bash
 uv sync
 ```
 
-Bu komut tüm gerekli bağımlılıkları (PyTorch, Transformers, tqdm) yükleyecektir.
+This command will install all required dependencies (PyTorch, Transformers, tqdm).
 
-## 📖 Kullanım
+## 📖 Usage
 
-### Tek Makine Testi
+### Single-Machine Test
 
-Proje ile birlikte gelen örnek veri seti ile hızlı bir test çalıştırmak için:
+To run a quick test with the sample dataset included in the project:
 
 ```bash
 uv run python tests/smoke_single_node.py
 ```
 
-Bu komut:
-- Küçük `sshleifer/tiny-gpt2` modelini indirir
-- `data/sample_corpus.txt` dosyasındaki örnek veriyi kullanır
-- CPU dostu `gloo` backend ile 1 epoch eğitim gerçekleştirir
-- Sonuçları `artifacts/smoke/` klasörüne kaydeder
+This command:
+- Downloads the small `sshleifer/tiny-gpt2` model
+- Uses sample data from `data/sample_corpus.txt`
+- Performs 1 epoch of training using the CPU-friendly `gloo` backend
+- Saves results to the `artifacts/smoke/` directory
 
-### Dağıtılmış Eğitim
+### Distributed Training
 
-Çok düğümlü eğitim için her düğümde aşağıdaki komutu çalıştırın:
+For multi-node training, run the following command on each node:
 
 ```bash
-# Temel kullanım
+# Basic usage
 uv run p2p-llm-forge \
   --model-name gpt2 \
   --dataset-path /path/to/dataset.txt \
@@ -69,7 +69,7 @@ uv run p2p-llm-forge \
   --batch-size 2 \
   --sequence-length 128
 
-# torchrun ile çok düğümlü eğitim
+# Multi-node training with torchrun
 torchrun --nnodes=2 --nproc_per_node=1 \
   --master_addr=node1 --master_port=29500 \
   uv run p2p-llm-forge \
@@ -82,89 +82,87 @@ torchrun --nnodes=2 --nproc_per_node=1 \
   --backend nccl
 ```
 
-### Komut Satırı Seçenekleri
+### Command Line Options
 
-Tüm kullanılabilir seçenekleri görmek için:
+To see all available options:
 
 ```bash
 uv run p2p-llm-forge --help
 ```
 
-**Önemli Parametreler:**
-- `--model-name`: HuggingFace model tanımlayıcısı
-- `--dataset-path`: Eğitim veri seti yolu
-- `--output-dir`: Checkpoint'lerin kaydedileceği dizin
-- `--epochs`: Eğitim epoch sayısı
-- `--batch-size`: Küresel batch boyutu
-- `--sequence-length`: Token başına maksimum sekans uzunluğu
-- `--backend`: Dağıtılmış backend (`nccl` veya `gloo`)
-- `--master-addr/--master-port`: Ana düğüm bağlantı bilgileri
+**Important Parameters:**
+- `--model-name`: HuggingFace model identifier
+- `--dataset-path`: Path to training dataset
+- `--output-dir`: Directory for saving checkpoints
+- `--epochs`: Number of training epochs
+- `--batch-size`: Global batch size per process
+- `--sequence-length`: Maximum tokens per training sequence
+- `--backend`: Distributed backend (`nccl` or `gloo`)
+- `--master-addr/--master-port`: Master node connection information
 
-## 🏗️ Proje Yapısı
+## 🏗️ Project Structure
 
 ```
 p2p-llm-forge/
 ├── src/
 │   └── p2p_llm_forge/
-│       ├── __init__.py          # Paket başlatma
-│       ├── __main__.py          # CLI giriş noktası
-│       ├── config.py            # Konfigürasyon yönetimi
-│       ├── data.py              # Veri yükleme ve işleme
-│       ├── distributed.py       # Dağıtılmış eğitim yönetimi
-│       └── trainer.py           # Eğitim döngüsü
+│       ├── __init__.py          # Package initialization
+│       ├── __main__.py          # CLI entry point
+│       ├── config.py            # Configuration management
+│       ├── data.py              # Data loading and processing
+│       ├── distributed.py       # Distributed training management
+│       └── trainer.py           # Training loop
 ├── data/
-│   └── sample_corpus.txt        # Örnek veri seti
+│   └── sample_corpus.txt        # Sample dataset
 ├── tests/
-│   └── smoke_single_node.py     # Tek makine test senaryosu
-├── pyproject.toml               # Proje konfigürasyonu
-└── README.md                    # Bu dosya
+│   └── smoke_single_node.py     # Single-machine test scenario
+├── pyproject.toml               # Project configuration
+└── README.md                    # This file
 ```
 
-### Ana Modüller
+### Core Modules
 
-- **`config.py`**: Eğitim hiperparametreleri ve dağıtılmış ayarlar için merkezi konfigürasyon
-- **`data.py`**: Tokenization ve shard edilmiş veri yükleme işlemleri
-- **`distributed.py`**: PyTorch DDP süreç grubu yönetimi
-- **`trainer.py`**: Eğitim döngüsü, kayıp hesaplama ve optimizasyon
+- **`config.py`**: Centralized configuration for training hyperparameters and distributed settings
+- **`data.py`**: Tokenization and sharded data loading operations
+- **`distributed.py`**: PyTorch DDP process group management
+- **`trainer.py`**: Training loop, loss computation, and optimization
 
-## ⚙️ Konfigürasyon
+## ⚙️ Configuration
 
-Proje aşağıdaki konfigürasyon seçeneklerini destekler:
+The project supports the following configuration options:
 
-### Dağıtılmış Eğitim
-- **Backend**: `nccl` (GPU) veya `gloo` (CPU)
-- **Rank/World Size**: Süreç sıralaması ve toplam süreç sayısı
-- **Master Node**: Ana koordinasyon düğümü bilgileri
+### Distributed Training
+- **Backend**: `nccl` (GPU) or `gloo` (CPU)
+- **Rank/World Size**: Process ranking and total number of processes
+- **Master Node**: Master coordination node information
 
-### Model ve Veri
-- **Model**: Herhangi bir HuggingFace causal LM modeli
-- **Veri**: Metin dosyası formatında veri setleri
-- **Sequence Length**: Maksimum token uzunluğu
+### Model and Data
+- **Model**: Any HuggingFace causal LM model
+- **Data**: Text file format datasets
+- **Sequence Length**: Maximum token length
 
-### Eğitim Parametreleri
-- **Batch Size**: Küresel batch boyutu (tüm süreçlerde toplam)
-- **Learning Rate**: Optimizasyon öğrenme oranı
-- **Epochs**: Eğitim dönemi sayısı
-- **Gradient Clipping**: Gradyan kırpma eşiği
+### Training Parameters
+- **Batch Size**: Global batch size (total across all processes)
+- **Learning Rate**: Optimization learning rate
+- **Epochs**: Number of training epochs
+- **Gradient Clipping**: Gradient clipping threshold
 
-### Geliştirme
+### Development
 
 ```bash
-# Geliştirme ortamını kurun
+# Set up development environment
 uv sync --editable
 
-# Testleri çalıştırın
+# Run tests
 uv run python tests/smoke_single_node.py
 
-# Kod kalitesi kontrolü
+# Code quality checks
 uv run ruff check .
 uv run ruff format .
 ```
 
-Bu proje MIT Lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakınız.
+## 📞 Contact
 
-## 📞 İletişim
-
-Sorularınız ve geri bildirimleriniz için issue açmaktan çekinmeyin!
+Feel free to open an issue for questions and feedback!
 
 ---
